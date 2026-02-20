@@ -13,6 +13,7 @@
   "author": "<username>",
   "description": "[Reserved]",
   "devDependencies": {
+    "consola": "^3.4.2",
     "dotenv": "^17.3.1"
   }
 }

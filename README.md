@@ -8,6 +8,9 @@ CLI tool to "reserve" an npm package name by publishing a temporary version `0.0
 
 - Local (interactive):
 
+  - Setup
+    `npm install`
+
   - Run and follow prompts:
     `npm run reserve`
 

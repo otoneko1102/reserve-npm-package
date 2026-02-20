@@ -9,6 +9,7 @@
 */
 
 require("dotenv").config({ quiet: true });
+const consola = require('consola');
 
 const fs = require("fs");
 const path = require("path");
@@ -40,9 +41,9 @@ function parseArgs(argv) {
 }
 
 function help() {
-  console.log("Usage: npm run reserve -- -p <package-name> -u <username>");
-  console.log("If flags are omitted you will be prompted interactively.");
-  console.log("Notes: username is used for `author`/LICENSE placeholders only; the tool will never publish as a scoped package.");
+  consola.log("Usage: npm run reserve -- -p <package-name> -u <username>");
+  consola.log("If flags are omitted you will be prompted interactively.");
+  consola.log("Notes: username is used for `author`/LICENSE placeholders only; the tool will never publish as a scoped package.");
 }
 
 async function prompt(question) {
@@ -133,13 +134,13 @@ async function runPublish(tmpDir) {
     const isTTY = process.stdin.isTTY && process.stdout.isTTY;
 
     if (!packageName && !isTTY) {
-      console.error(
+      consola.error(
         "Error: package name missing and not in interactive terminal. Provide -p/--package-name.",
       );
       process.exit(1);
     }
     if (!username && !isTTY) {
-      console.error(
+      consola.error(
         "Error: username missing and not in interactive terminal. Provide -u/--username.",
       );
       process.exit(1);
@@ -154,17 +155,17 @@ async function runPublish(tmpDir) {
     // basic trimming of user input
     if (username) username = username.trim();
     if (!simpleValidatePackageName(packageName)) {
-      console.error("Invalid package name. Aborting.");
+      consola.error("Invalid package name. Aborting.");
       process.exit(1);
     }
     if (!username) {
-      console.error("Invalid username. Aborting.");
+      consola.error("Invalid username. Aborting.");
       process.exit(1);
     }
 
     const token = process.env.NPM_TOKEN;
     if (!token) {
-      console.error(
+      consola.error(
         "NPM_TOKEN environment variable is required (process.env.NPM_TOKEN).",
       );
       process.exit(1);
@@ -176,10 +177,10 @@ async function runPublish(tmpDir) {
     );
     const tmpDir = path.join(tmpRoot, path.basename(cwd));
 
-    console.log("\n🔧 Creating temporary workspace...");
+    consola.info("Creating temporary workspace...");
     await copyDir(cwd, tmpDir);
 
-    console.log("🔁 Replacing placeholders in temporary copy...");
+    consola.info("Replacing placeholders in temporary copy...");
     await replacePlaceholdersInDir(tmpDir, {
       "<username>": username,
       "<package-name>": packageName,
@@ -245,16 +246,16 @@ async function runPublish(tmpDir) {
         }
       }
 
-      console.log("ℹ️  Removed files from temporary package according to .npmignore (or defaults).");
+      consola.info("Removed files from temporary package according to .npmignore (or defaults).");
     } catch (err) {
       // ignore removal errors
     }
 
-    console.log(`\n🚀 Publishing ${packageName}@0.0.0-reserved (temporary)...`);
+    consola.info(`Publishing ${packageName}@0.0.0-reserved (temporary)...`);
     let publishResult = await runPublish(tmpDir);
 
     if (publishResult.code === 0) {
-      console.log(`\n✅ Successfully published ${packageName}@0.0.0-reserved`);
+      consola.success(`Successfully published ${packageName}@0.0.0-reserved`);
 
       // log the reserved package name at the top of log.txt (newest first)
       try {
@@ -263,22 +264,22 @@ async function runPublish(tmpDir) {
         try { prev = await fs.promises.readFile(logPath, 'utf8'); } catch (e) { /* missing file is fine */ }
         const updated = packageName + '\n' + (prev || '');
         await fs.promises.writeFile(logPath, updated, 'utf8');
-        console.log(`ℹ️  Recorded reserved package in ${logPath}`);
+        consola.success(`Recorded reserved package in ${logPath}`);
       } catch (err) {
-        console.error('Warning: failed to update log.txt -', err.message || err);
+        consola.warn('Warning: failed to update log.txt - ' + (err.message || err));
       }
 
     } else {
       // show npm output and fail — this tool will not attempt a scoped publish
-      console.error('\n--- npm publish output ---');
-      process.stdout.write(publishResult.stdout || '');
-      process.stderr.write(publishResult.stderr || '');
-      console.error('--- end output ---\n');
+      consola.error('\n--- npm publish output ---');
+      if (publishResult.stdout) consola.log(publishResult.stdout);
+      if (publishResult.stderr) consola.error(publishResult.stderr);
+      consola.error('--- end output ---\n');
 
       const logText = (publishResult.stderr || publishResult.stdout || '').toString();
       const nameTaken = /Package name too similar|is already in use|403 Forbidden|E403|forbidden/i.test(logText);
       if (nameTaken) {
-        console.error('Publish was rejected (name already used or too similar). This tool will not publish as a scoped package; choose a different package-name.');
+        consola.error('Publish was rejected (name already used or too similar). This tool will not publish as a scoped package; choose a different package-name.');
       }
 
       throw new Error((publishResult.stderr || publishResult.stdout || '').toString() || 'npm publish failed with code ' + publishResult.code);
@@ -291,7 +292,7 @@ async function runPublish(tmpDir) {
       // ignore cleanup errors
     }
   } catch (err) {
-    console.error("\n⚠️  Error:", err.message || err);
+    consola.fatal("Error: " + (err.message || err));
     process.exit(1);
   }
 })();
