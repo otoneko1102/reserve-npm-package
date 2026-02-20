@@ -1,0 +1,18 @@
+{
+  "name": "<package-name>",
+  "version": "0.0.0-reserved",
+  "main": "index.js",
+  "scripts": {
+    "help": "node scripts/main.js --help",
+    "reserve": "node scripts/main.js"
+  },
+  "files": [
+    "index.js"
+  ],
+  "keywords": [],
+  "author": "<username>",
+  "description": "[Reserved]",
+  "devDependencies": {
+    "dotenv": "^17.3.1"
+  }
+}
