@@ -6,10 +6,17 @@ CLI tool to "reserve" an npm package name by publishing a temporary version `0.0
 
 ## Usage
 
+> [!Warning]  
+> Requires PAT with `All Packages` permissions.
+
 - Local (interactive):
 
   - Setup
-    `npm install`
+    ```bash
+    git clone https://github.com/otoneko1102/reserve-npm-package.git
+    cd reserve-npm-package
+    npm install
+    ```
 
   - Run and follow prompts:
     `npm run reserve`

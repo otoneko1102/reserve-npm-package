@@ -6,10 +6,17 @@ npm のパッケージ名を簡単に「予約」するための CLI ツール�
 
 ## 使い方
 
+> [!Warning]  
+> `All Packages` の権限を持ったPATが必要です。
+
 - ローカル（対話式）:
 
   - セットアップ
-    `npm install`
+    ```bash
+    git clone https://github.com/otoneko1102/reserve-npm-package.git
+    cd reserve-npm-package
+    npm install
+    ```
 
   - 実行してプロンプトに従う:
     `npm run reserve`
