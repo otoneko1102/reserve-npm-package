@@ -8,6 +8,8 @@ CLI tool to "reserve" an npm package name by publishing a temporary version `0.0
 
 > [!Warning]  
 > `PAT` with `Read and Write` permissions for `All Packages` is required.
+>
+> This tool is provided for research purposes. Do not misuse it; any attempts to reserve packages on behalf of others or for malicious reasons are the user’s own responsibility.
 
 - Local (interactive):
 
