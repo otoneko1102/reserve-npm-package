@@ -7,7 +7,7 @@ npm のパッケージ名を簡単に「予約」するための CLI ツール�
 ## 使い方
 
 > [!Warning]  
-> `All Packages` の権限を持ったPATが必要です。
+> `All Packages` に対して `Read and Write` の権限を持った `PAT` が必要です。
 
 - ローカル（対話式）:
 
